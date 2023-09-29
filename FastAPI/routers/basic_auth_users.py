@@ -1,8 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-app = FastAPI()
+router = APIRouter(prefix="/basicauth",
+                   tags=["basicauth"],
+                   responses={status.HTTP_404_NOT_FOUND: {"message": "No encontrado"}})
 
 oauth2 = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -51,7 +53,7 @@ async def current_user(token: str = Depends(oauth2)):
             headers={"WWW-Authentica": "Bearer"})
     return user
 
-@app.post("/login")
+@router.post("/login")
 async def login(form: OAuth2PasswordRequestForm = Depends()): 
     users_db = users_db.get(form.username)
     if not users_db:
@@ -65,6 +67,6 @@ async def login(form: OAuth2PasswordRequestForm = Depends()):
     return {"access_token": user.username , "token_type": "bearer"}
 
 
-@app.get("/users/me")
+@router.get("/users/me")
 async def me(user: User = Depends(current_user)):
     return user

@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import products, users
+from routers import products, users, users_db, basic_auth_users, jwt_auth_users
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
@@ -7,6 +7,9 @@ app = FastAPI()
 # Routers
 app.include_router(products.router)
 app.include_router(users.router)
+app.include_router(jwt_auth_users.router)
+app.include_router(basic_auth_users.router)
+app.include_router(users_db.router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
@@ -16,3 +19,5 @@ async def root():
 @app.get("/url")
 async def root():
     return {"url_curso":"https://www.google.es"}
+
+#Inicia el server python -m uvicorn main:app --reload
